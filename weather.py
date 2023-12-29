@@ -48,6 +48,13 @@ Wind_spd = data['wind']['speed']
 Wind_deg = data['wind']['deg']
 Cloud_Percent = data['clouds']['all']
 
+# Printing output data from API
+print(f'''
+      It's {Date}
+      temperature in {City_Name} is {Temp_Avg}°C
+      with {Cloud_Percent}% cloud
+      and {Humidity}% Humidity''')
+
 # Formating from JSON to Pandas Dataframe
 Data_Clean = pd.DataFrame({
     'Date': Date,
@@ -143,7 +150,7 @@ else:
     # Converting the object data value to numeric value
     convert_columns = ['Temp_Avg', 'Humidity', 'Cloud']
     for column in convert_columns:
-        Dataset_Filtered[column] = Dataset_Filtered[column].astype(str).str.extract(r'(\d+\.\d+)').astype(float)
+        Dataset_Filtered[column] = pd.to_numeric(Dataset_Filtered[column].str.extract(r'(\d+\.*\d*)')[0], errors='coerce')
 
     # Averaging data by date
     Filtered_Date = Dataset_Filtered.groupby('Date').mean().reset_index()
@@ -172,14 +179,14 @@ ax2.plot(Filtered_Date['Date'],
         Filtered_Date['Cloud'], 'o-')
 
 # Configure the label and title figure
-ax1.set(ylabel=r'Temperature ($^\circ$C)',
+ax1.set(ylabel=r'Celcius ($^\circ$C)',
        )
 ax1.set_title('Temperature')
 
 ax2.set(xlabel='Date',
-       ylabel=r'Temperature ($^\circ$C)',
+       ylabel=r'Percentage (%)',
        )
-ax2.set_title('Cloud Percentage')
+ax2.set_title('Cloud')
 
 # Configure grid to visualize the y axis grid
 ax1.grid(which='both')
