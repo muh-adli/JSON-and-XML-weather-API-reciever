@@ -7,28 +7,29 @@ import matplotlib.pyplot as plt
 import json
 
 try:
-    with open(".venv/API.txt", "r") as file:
+    with open('.venv/API.txt', 'r') as file:
         API_KEY = file.read().strip()
     print('API Key found.')
 except Exception as e:
     print('API Key not found.')
 
-## make code for inputting city
-# city = input("Enter a city name: ")
-city = "Jakarta" # Default city is Jakarta
+## make code for input city name
+print('Default city is Jakarta')
+city = input('Enter a city name: ')
+# city = 'Jakarta' # Default city is Jakarta
 
 # API calling format to change city and use API KEY
-BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
-request_url = f"{BASE_URL}?appid={API_KEY}&q={city}"
+BASE_URL = 'http://api.openweathermap.org/data/2.5/weather'
+request_url = f'{BASE_URL}?appid={API_KEY}&q={city}'
 print('Calling API')
 response = requests.get(request_url)
 
 # to make sure the response is correct
 if response.status_code == 200:
     data = response.json()
-    print("Data Accepted.")
+    print('Data Accepted.')
 else:
-    print(f"Error {response.status_code}: {response.text}")
+    print(f'Error {response.status_code}: {response.text}')
 
 print('Processing Data.')
 # Get Coordinate
@@ -100,7 +101,7 @@ try:
 
 # Printing error that occured if existed
 except Exception as e:
-    print(f"Error: {e}")
+    print(f'Error: {e}')
 
 # Load Dataset file
 Dataset = pd.read_json(file_path)
@@ -113,20 +114,21 @@ CRS = {'init':'epsg:4326'}
 print('Plotting with coordinate')
 Dataset['geometry'] = gpd.points_from_xy(Dataset['Long'], Dataset['Lat'])
 GeoDataset = gpd.GeoDataFrame(Dataset, crs=crs, geometry=Dataset['geometry'])
-GeoDataset['Date'] = GeoDataset['Date'].dt.strftime("%Y-%m-%d %H:%M:%S")
+GeoDataset['Date'] = GeoDataset['Date'].dt.strftime('%Y-%m-%d %H:%M:%S')
 GeoDataset.explore()
 
 ## Code to input desired city
-# Filter_City = input('Input a City: ')
-Filter_City = 'Jakarta' #Default filtered city is Jakarta
+print('Default city is Jakarta')
+Filter_City = input('Input a City to visualize: ')
+# Filter_City = 'Jakarta' #Default filtered city is Jakarta
 Dataset_Filtered = Dataset[Dataset['City'] == Filter_City]
 
 if Dataset_Filtered.empty:
     # Print console if dataset is empty
-    print("Data not available.")
+    print('Data not available.')
 
 else:
-    print("Processing Data.")
+    print('Processing Data.')
     # Cleansing data to dd-mm-yy format
     Dataset_Filtered['Date'] = Dataset_Filtered['Date'].dt.strftime('%d-%m-%Y')
 
@@ -157,38 +159,38 @@ else:
     print('Done.')
 
 ### Visualizing Data from dataset
-print("Visualizing Data.")
+print('Visualizing Data.')
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,6))
 plt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9, wspace=0.2, hspace=0.4)
-fig.suptitle(f'Temperature in {Filter_City}')
+fig.suptitle(f'Weather in {Filter_City}')
 
 # Define data to plotting
 ax1.plot(Filtered_Date['Date'],
         Filtered_Date['Temp_Avg'], 'o-')
 
-# ax2.plot(Filtered_Hour['Date'],
-#         Filtered_Hour['Temp_Avg'], '.-')
+ax2.plot(Filtered_Date['Date'],
+        Filtered_Date['Cloud'], 'o-')
 
 # Configure the label and title figure
 ax1.set(ylabel=r'Temperature ($^\circ$C)',
        )
-ax1.set_title('Day')
+ax1.set_title('Temperature')
 
 ax2.set(xlabel='Date',
        ylabel=r'Temperature ($^\circ$C)',
        )
-ax2.set_title("Hour")
+ax2.set_title('Cloud Percentage')
 
 # Configure grid to visualize the y axis grid
 ax1.grid(which='both')
 ax1.grid(which='minor', alpha=0.2, linestyle='dotted')
 ax1.grid(which='major', alpha=0.5, linestyle='dotted')
-ax1.set_ylim([10, 100])
+ax1.set_ylim([0, 100])
 
 ax2.grid(which='both')
 ax2.grid(which='minor', alpha=0.2, linestyle='dotted')
 ax2.grid(which='major', alpha=0.5, linestyle='dotted')
-ax2.set_ylim([10, 100])
+ax2.set_ylim([0, 100])
 print('Done.')
 
 plt.show()
