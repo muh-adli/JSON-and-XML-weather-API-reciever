@@ -15,8 +15,8 @@ except Exception as e:
 
 ## make code for input city name
 print('Default city is Jakarta')
-city = input('Enter a city name: ')
-# city = 'Jakarta' # Default city is Jakarta
+# city = input('Enter a city name: ')
+city = 'Jakarta' # Default city is Jakarta
 
 # API calling format to change city and use API KEY
 BASE_URL = 'http://api.openweathermap.org/data/2.5/weather'
@@ -126,8 +126,8 @@ GeoDataset.explore()
 
 ## Code to input desired city
 print('Default city is Jakarta')
-Filter_City = input('Input a City to visualize: ')
-# Filter_City = 'Jakarta' #Default filtered city is Jakarta
+# Filter_City = input('Input a City to visualize: ')
+Filter_City = 'Jakarta' # Default filtered city is Jakarta
 Dataset_Filtered = Dataset[Dataset['City'] == Filter_City]
 
 if Dataset_Filtered.empty:
@@ -171,6 +171,9 @@ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,6))
 plt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9, wspace=0.2, hspace=0.4)
 fig.suptitle(f'Weather in {Filter_City}')
 
+# Sorting Data
+Filtered_Date = Filtered_Date.sort_values(by='Date', ascending=False).reset_index(drop=True)
+
 # Define data to plotting
 ax1.plot(Filtered_Date['Date'],
         Filtered_Date['Temp_Avg'], 'o-')
@@ -186,7 +189,7 @@ ax1.set_title('Temperature')
 ax2.set(xlabel='Date',
        ylabel=r'Percentage (%)',
        )
-ax2.set_title('Cloud')
+ax2.set_title('Cloud Percentage')
 
 # Configure grid to visualize the y axis grid
 ax1.grid(which='both')
